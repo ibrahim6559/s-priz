@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sadece Sana ✨</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            overflow: hidden;
+            background: #060815;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .ui {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            pointer-events: none;
+            /* sadece kartın içi tıklansın */
+        }
+
+        .card {
+            pointer-events: auto;
+            width: min(520px, calc(100vw - 36px));
+            border-radius: 22px;
+            padding: 18px 18px 16px;
+            background: rgba(255, 255, 255, .07);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, .14);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .55);
+            color: rgba(255, 255, 255, .92);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            background: radial-gradient(circle at 20% 20%, rgba(244, 114, 182, .18), transparent 55%),
+                radial-gradient(circle at 80% 30%, rgba(167, 139, 250, .18), transparent 60%),
+                radial-gradient(circle at 50% 90%, rgba(96, 165, 250, .14), transparent 60%);
+            pointer-events: none;
+        }
+
+        .q {
+            position: relative;
+            font-size: 22px;
+            font-weight: 750;
+            letter-spacing: .2px;
+            text-align: center;
+            margin: 8px 0 14px;
+        }
+
+        .sub {
+            position: relative;
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255, 255, 255, .68);
+            margin-bottom: 14px;
+        }
+
+        .btnRow {
+            position: relative;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            padding: 6px 0 2px;
+            user-select: none;
+        }
+
+        button {
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .12s ease, opacity .2s ease, filter .2s ease;
+        }
+
+        .yes {
+            color: #2b0a18;
+            background: linear-gradient(135deg, #f472b6, #fbbf24);
+            box-shadow: 0 10px 30px rgba(244, 114, 182, .25);
+        }
+
+        .yes:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+        }
+
+        .no {
+            color: rgba(255, 255, 255, .92);
+            background: rgba(255, 255, 255, .10);
+            border: 1px solid rgba(255, 255, 255, .16);
+            backdrop-filter: blur(8px);
+        }
+
+        .no:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Hayır butonu kart içinde istediğimiz gibi zıplasın */
+        .noFloatWrap {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            /* wrapper tıklanmasın */
+        }
+
+        .noFloatWrap .no {
+            position: absolute;
+            pointer-events: auto;
+            /* buton tıklansın */
+            left: 50%;
+            top: 74%;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .hint {
+            position: fixed;
+            left: 18px;
+            bottom: 16px;
+            color: rgba(255, 255, 255, .55);
+            font-size: 12px;
+            letter-spacing: .2px;
+            user-select: none;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, .6);
+            pointer-events: none;
+        }
+
+        /* 2. sayfa: pembe tema */
+        .pinkPage {
+            position: fixed;
+            inset: 0;
+            display: none;
+            place-items: center;
+            background: radial-gradient(circle at 30% 20%, rgba(244, 114, 182, .35), transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(251, 191, 36, .20), transparent 55%),
+                radial-gradient(circle at 50% 80%, rgba(167, 139, 250, .25), transparent 55%),
+                rgba(10, 3, 18, .45);
+            backdrop-filter: blur(6px);
+        }
+
+        .pinkCard {
+            width: min(560px, calc(100vw - 36px));
+            border-radius: 26px;
+            padding: 22px 20px 18px;
+            background: rgba(255, 192, 203, .10);
+            border: 1px solid rgba(255, 192, 203, .22);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, .55);
+            color: rgba(255, 255, 255, .92);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pinkCard h1 {
+            margin: 6px 0 8px;
+            font-size: 26px;
+            letter-spacing: .2px;
+        }
+
+        .pinkCard p {
+            margin: 0 0 14px;
+            color: rgba(255, 255, 255, .74);
+            line-height: 1.45;
+            font-size: 14px;
+        }
+
+        .backBtn {
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .18);
+            color: rgba(255, 255, 255, .92);
+        }
+
+        .backBtn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* küçük kalp animasyonu */
+        .hearts {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .9;
+        }
+
+        .heart {
+            position: absolute;
+            left: 50%;
+            top: 70%;
+            width: 14px;
+            height: 14px;
+            transform: translate(-50%, -50%) rotate(45deg);
+            background: rgba(244, 114, 182, .85);
+            animation: floatUp 2.8s linear infinite;
+            filter: drop-shadow(0 8px 18px rgba(244, 114, 182, .25));
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: inherit;
+        }
+
+        .heart::before {
+            left: -7px;
+            top: 0;
+        }
+
+        .heart::after {
+            left: 0;
+            top: -7px;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translate(-50%, -50%) rotate(45deg) translateY(0) scale(1);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: .9;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(45deg) translateY(-260px) scale(.8);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c"></canvas>
+
+    <!-- Soru UI -->
+    <div class="ui" id="questionUI">
+        <div class="card" id="card">
+            <div class="q">Beni seviyor musun? 💗</div>
+            <div class="sub">Doğru cevap belli ama… 😄</div>
+
+            <div class="btnRow">
+                <button class="yes" id="yesBtn">Evet</button>
+                <!-- Hayır butonu kart içinde serbest dolaşacak -->
+            </div>
+
+            <div class="noFloatWrap">
+                <button class="no" id="noBtn">Hayır</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint">Tıkla → parıltı ✨ | Evet → pembe sayfa</div>
+
+    <!-- 2. Sayfa (Pembe Tema) -->
+    <div class="pinkPage" id="pinkPage">
+        <div class="pinkCard">
+            <div class="hearts" id="hearts"></div>
+            <h1>Ben de seni seviyorum 💞</h1>
+            <p>
+                Bu sayfa sadece sana. <br />
+                İstersen buraya “mektup”, “bizim hikayemiz”, fotoğraflar ve şarkımızı da ekleriz.
+            </p>
+            <button class="backBtn" id="backBtn">Geri dön</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================
+        //  CANVAS ANİMASYONU (SENİN İSTEDİĞİN AYNI KALIYOR)
+        // =========================
+        const PALETTE = {
+            bgTop: "#05071a",
+            bgMid: "#071a2b",
+            bgBot: "#020414",
+            glow: "rgba(160, 120, 255, 0.14)",
+            leaf1: "#2dd4bf",
+            leaf2: "#60a5fa",
+            grass1: "#34d399",
+            grass2: "#a78bfa",
+            petalA: "#f472b6",
+            petalB: "#fbbf24",
+            petalC: "#93c5fd",
+            center: "#fff7ed",
+            sparkle: "rgba(255,255,255,0.85)"
+        };
+
+        const canvas = document.getElementById("c");
+        const ctx = canvas.getContext("2d");
+
+        let W = 0, H = 0, DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+        function resize() {
+            W = Math.floor(window.innerWidth);
+            H = Math.floor(window.innerHeight);
+            canvas.width = Math.floor(W * DPR);
+            canvas.height = Math.floor(H * DPR);
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        const rand = (a, b) => a + Math.random() * (b - a);
+
+        function paintBackground(t) {
+            const g = ctx.createLinearGradient(0, 0, 0, H);
+            g.addColorStop(0, PALETTE.bgTop);
+            g.addColorStop(0.55, PALETTE.bgMid);
+            g.addColorStop(1, PALETTE.bgBot);
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            ctx.fillStyle = PALETTE.glow;
+            for (let i = 0; i < 3; i++) {
+                const x = W * (0.2 + i * 0.3) + Math.sin(t * 0.0007 + i) * 60;
+                const y = H * (0.25 + i * 0.18) + Math.cos(t * 0.0006 + i) * 50;
+                const r = 220 + i * 70;
+                ctx.beginPath();
+                ctx.ellipse(x, y, r, r * 0.8, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        const floaters = Array.from({ length: 80 }, () => ({
+            x: Math.random(), y: Math.random(),
+            s: rand(0.6, 2.0),
+            a: rand(0.10, 0.55),
+            v: rand(0.015, 0.05),
+            p: rand(0, Math.PI * 2)
+        }));
+
+        function paintFloaters(t) {
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            for (const f of floaters) {
+                f.y -= f.v * 0.003;
+                if (f.y < -0.05) { f.y = 1.05; f.x = Math.random(); }
+                const x = f.x * W + Math.sin(t * 0.001 + f.p) * 18;
+                const y = f.y * H + Math.cos(t * 0.0012 + f.p) * 10;
+                ctx.fillStyle = `rgba(255,255,255,${f.a})`;
+                ctx.beginPath();
+                ctx.arc(x, y, f.s, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function petal(cx, cy, r, angle, width, col, alpha = 1) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle);
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = col;
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(width, -r * 0.2, width, -r * 0.9, 0, -r);
+            ctx.bezierCurveTo(-width, -r * 0.9, -width, -r * 0.2, 0, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function stem(x0, y0, len, sway, col) {
+            ctx.save();
+            ctx.strokeStyle = col;
+            ctx.lineWidth = 6;
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            const x1 = x0 + sway * 18;
+            const y1 = y0 - len * 0.45;
+            const x2 = x0 - sway * 22;
+            const y2 = y0 - len * 0.78;
+            const x3 = x0 + sway * 10;
+            const y3 = y0 - len;
+            ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+            ctx.stroke();
+            ctx.restore();
+            return { x: x0 + sway * 10, y: y0 - len };
+        }
+
+        function leaf(x, y, size, ang, col) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(ang);
+            ctx.fillStyle = col;
+            ctx.globalAlpha = 0.9;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(size * 0.8, -size * 0.3, 0, -size);
+            ctx.quadraticCurveTo(-size * 0.8, -size * 0.3, 0, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        let perfT = 0;
+        function flower(headX, headY, scale, sway, variant = 0) {
+            const petals = 6;
+            const baseR = 46 * scale;
+            const wob = Math.sin(perfT * 0.004 + variant) * 0.20;
+
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            for (let i = 0; i < petals; i++) {
+                const a = (i / petals) * Math.PI * 2 + wob + sway * 0.25;
+                const w = 22 * scale;
+                const col = (i % 3 === 0) ? PALETTE.petalA : (i % 3 === 1 ? PALETTE.petalB : PALETTE.petalC);
+                petal(headX, headY, baseR, a, w, col, 0.95);
+            }
+            ctx.restore();
+
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            ctx.fillStyle = PALETTE.center;
+            ctx.shadowColor = "rgba(255,255,255,0.55)";
+            ctx.shadowBlur = 18;
+            ctx.beginPath();
+            ctx.arc(headX, headY, 12 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function grassBlade(x, y, h, sway, col) {
+            ctx.save();
+            ctx.strokeStyle = col;
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.quadraticCurveTo(
+                x + sway * 16, y - h * 0.45,
+                x - sway * 10, y - h
+            );
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        const groundY = () => H * 0.86;
+
+        const stems = [
+            { x: 0.42, len: 320, s: 1.00, v: 0 },
+            { x: 0.50, len: 280, s: 0.92, v: 1 },
+            { x: 0.58, len: 310, s: 0.96, v: 2 },
+            { x: 0.47, len: 240, s: 0.80, v: 3 },
+            { x: 0.62, len: 220, s: 0.75, v: 4 },
+        ];
+
+        const grasses = Array.from({ length: 30 }, (_, i) => ({
+            x: rand(0.22, 0.78),
+            h: rand(80, 170),
+            p: rand(0, Math.PI * 2),
+            c: (i % 2 === 0) ? PALETTE.grass1 : PALETTE.grass2
+        }));
+
+        const bursts = [];
+        window.addEventListener("pointerdown", (e) => {
+            // Canvas click sparkle her yerde çalışsın
+            const rect = canvas.getBoundingClientRect();
+            const px = e.clientX - rect.left;
+            const py = e.clientY - rect.top;
+            const n = 14;
+            for (let i = 0; i < n; i++) {
+                const a = (i / n) * Math.PI * 2 + rand(-0.2, 0.2);
+                bursts.push({
+                    x: px, y: py,
+                    vx: Math.cos(a) * rand(0.6, 2.2),
+                    vy: Math.sin(a) * rand(0.6, 2.2),
+                    life: rand(350, 800),
+                    born: performance.now(),
+                    s: rand(1.0, 2.4)
+                });
+            }
+        });
+
+        function paintBursts(t) {
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            for (let i = bursts.length - 1; i >= 0; i--) {
+                const b = bursts[i];
+                const age = t - b.born;
+                if (age > b.life) { bursts.splice(i, 1); continue; }
+                const k = 1 - age / b.life;
+                b.x += b.vx;
+                b.y += b.vy;
+                b.vy += 0.02;
+                ctx.fillStyle = `rgba(255,255,255,${0.55 * k})`;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.s * k, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function frame(t) {
+            perfT = t;
+            paintBackground(t);
+            paintFloaters(t);
+
+            const gy = groundY();
+
+            ctx.save();
+            ctx.globalAlpha = 0.22;
+            const mg = ctx.createLinearGradient(0, gy - 120, 0, gy + 120);
+            mg.addColorStop(0, "rgba(255,255,255,0)");
+            mg.addColorStop(1, "rgba(255,255,255,0.10)");
+            ctx.fillStyle = mg;
+            ctx.fillRect(0, gy - 140, W, 240);
+            ctx.restore();
+
+            const wind = Math.sin(t * 0.0012) * 0.7 + Math.sin(t * 0.0007) * 0.4;
+            for (const g of grasses) {
+                const x = g.x * W;
+                const s = Math.sin(t * 0.002 + g.p) * 0.8 + wind;
+                grassBlade(x, gy + 10, g.h, s * 0.35, g.c);
+            }
+
+            for (const st of stems) {
+                const x = st.x * W;
+                const sway = (Math.sin(t * 0.0016 + st.v) * 0.8 + wind * 0.6) * 0.55;
+                const head = stem(x, gy + 30, st.len, sway, PALETTE.leaf2);
+
+                leaf(x + sway * 10, gy - st.len * 0.35, 70 * st.s, -0.7 + sway * 0.3, PALETTE.leaf1);
+                leaf(x - sway * 6, gy - st.len * 0.55, 55 * st.s, 0.9 + sway * 0.2, PALETTE.leaf2);
+
+                flower(head.x, head.y, st.s, sway, st.v);
+            }
+
+            paintBursts(t);
+            requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+
+        // =========================
+        //  SORU + EVET/HAYIR LOGIC
+        // =========================
+        const questionUI = document.getElementById("questionUI");
+        const pinkPage = document.getElementById("pinkPage");
+        const yesBtn = document.getElementById("yesBtn");
+        const noBtn = document.getElementById("noBtn");
+        const card = document.getElementById("card");
+        const hearts = document.getElementById("hearts");
+        const backBtn = document.getElementById("backBtn");
+
+        let noClicks = 0;
+        let noScale = 1;
+
+        // Hayır butonu rastgele kart içinde konumlanacak
+        function moveNoButton() {
+            const pad = 14;
+            const rect = card.getBoundingClientRect();
+
+            // butonun ölçüsünü scale sonrası da hesaba katmaya çalışalım
+            const btnRect = noBtn.getBoundingClientRect();
+            const bw = btnRect.width || 110;
+            const bh = btnRect.height || 42;
+
+            // kartın içinde kalacak rastgele koordinat
+            const maxX = rect.width - bw - pad * 2;
+            const maxY = rect.height - bh - pad * 2;
+
+            const x = pad + Math.max(0, Math.random() * maxX);
+            const y = pad + Math.max(0, Math.random() * maxY);
+
+            // absolute (card'ın içindeki wrapper zaten full)
+            noBtn.style.left = x + "px";
+            noBtn.style.top = y + "px";
+            noBtn.style.transform = `translate(0,0) scale(${noScale})`;
+        }
+
+        // başlangıçta ortadan biraz aşağıda dursun
+        setTimeout(() => moveNoButton(), 60);
+
+        noBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            noClicks += 1;
+
+            // her tıklamada küçült + zıplat
+            noScale = Math.max(0.55, noScale - 0.18);
+            moveNoButton();
+
+            // 3. tık -> yok olsun
+            if (noClicks >= 3) {
+                noBtn.style.opacity = "0";
+                noBtn.style.pointerEvents = "none";
+                setTimeout(() => { noBtn.style.display = "none"; }, 220);
+            }
+        });
+
+        function spawnHearts() {
+            hearts.innerHTML = "";
+            for (let i = 0; i < 12; i++) {
+                const h = document.createElement("div");
+                h.className = "heart";
+                h.style.left = (20 + Math.random() * 60) + "%";
+                h.style.top = (68 + Math.random() * 18) + "%";
+                h.style.animationDelay = (Math.random() * 1.2) + "s";
+                h.style.animationDuration = (2.2 + Math.random() * 1.6) + "s";
+                // bazıları altın tonlu
+                if (Math.random() < 0.28) h.style.background = "rgba(251,191,36,.80)";
+                hearts.appendChild(h);
+            }
+        }
+
+        yesBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            questionUI.style.display = "none";
+            pinkPage.style.display = "grid";
+            spawnHearts();
+        });
+
+        backBtn.addEventListener("click", () => {
+            pinkPage.style.display = "none";
+            questionUI.style.display = "grid";
+            // Hayır butonunu tekrar getir (istersen reset)
+            noClicks = 0;
+            noScale = 1;
+            noBtn.style.display = "block";
+            noBtn.style.opacity = "1";
+            noBtn.style.pointerEvents = "auto";
+            moveNoButton();
+        });
+    </script>
+</body>
+
+</html>
