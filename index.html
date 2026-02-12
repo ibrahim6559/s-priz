@@ -30,7 +30,7 @@
             display: grid;
             place-items: center;
             pointer-events: none;
-            /* sadece kartın içi tıklansın */
+
         }
 
         .card {
@@ -115,18 +115,18 @@
             transform: translateY(-1px);
         }
 
-        /* Hayır butonu kart içinde istediğimiz gibi zıplasın */
+
         .noFloatWrap {
             position: absolute;
             inset: 0;
             pointer-events: none;
-            /* wrapper tıklanmasın */
+
         }
 
         .noFloatWrap .no {
             position: absolute;
             pointer-events: auto;
-            /* buton tıklansın */
+
             left: 50%;
             top: 74%;
             transform: translate(-50%, -50%) scale(1);
@@ -144,7 +144,7 @@
             pointer-events: none;
         }
 
-        /* 2. sayfa: pembe tema */
+
         .pinkPage {
             position: fixed;
             inset: 0;
@@ -193,7 +193,7 @@
             transform: translateY(-1px);
         }
 
-        /* küçük kalp animasyonu */
+
         .hearts {
             position: absolute;
             inset: 0;
@@ -254,15 +254,15 @@
 <body>
     <canvas id="c"></canvas>
 
-    <!-- Soru UI -->
+
     <div class="ui" id="questionUI">
         <div class="card" id="card">
             <div class="q">Beni seviyor musun? 💗</div>
-            <div class="sub">Doğru cevap belli ama… 😄</div>
+            <div class="sub">Zorlama Aşkııımmmmm, deli divaneler gibi aşıksın biliyorummmm😄</div>
 
             <div class="btnRow">
                 <button class="yes" id="yesBtn">Evet</button>
-                <!-- Hayır butonu kart içinde serbest dolaşacak -->
+
             </div>
 
             <div class="noFloatWrap">
@@ -271,25 +271,33 @@
         </div>
     </div>
 
-    <div class="hint">Tıkla → parıltı ✨ | Evet → pembe sayfa</div>
+    <div class="hint">sevgilim için</div>
 
-    <!-- 2. Sayfa (Pembe Tema) -->
+
     <div class="pinkPage" id="pinkPage">
         <div class="pinkCard">
             <div class="hearts" id="hearts"></div>
             <h1>Ben de seni seviyorum 💞</h1>
             <p>
-                Bu sayfa sadece sana. <br />
-                İstersen buraya “mektup”, “bizim hikayemiz”, fotoğraflar ve şarkımızı da ekleriz.
+                Bu sayfa sadece sana. <br /><br />
+
+                2. Sevgililer Günümüz ✅<br /><br />
+
+                1 yıl oldu ve hâlâ senden sıkılmadım (bu bence büyük başarı 😄).<br /><br />
+
+                Şaka bir yana…
+                Bu 1 yılda en sevdiğim şey, ‘ben’ken bile ‘biz’ olmayı öğrenmekti.
+                Seninle her şey daha renkli, daha kolay, daha gerçek.
+                İyi ki geldin, iyi ki kaldın. Seni çoooooooookkkkkk amaa çookkk seviyorum sevgiliiimmm herşey için
+                teşekkürler
+                (Buda benim sana farklı bir hediyemmm umarım beğenmişsindir 🥰).<br />
             </p>
             <button class="backBtn" id="backBtn">Geri dön</button>
         </div>
     </div>
 
     <script>
-        // =========================
-        //  CANVAS ANİMASYONU (SENİN İSTEDİĞİN AYNI KALIYOR)
-        // =========================
+
         const PALETTE = {
             bgTop: "#05071a",
             bgMid: "#071a2b",
@@ -479,7 +487,7 @@
 
         const bursts = [];
         window.addEventListener("pointerdown", (e) => {
-            // Canvas click sparkle her yerde çalışsın
+
             const rect = canvas.getBoundingClientRect();
             const px = e.clientX - rect.left;
             const py = e.clientY - rect.top;
@@ -555,9 +563,7 @@
         }
         requestAnimationFrame(frame);
 
-        // =========================
-        //  SORU + EVET/HAYIR LOGIC
-        // =========================
+
         const questionUI = document.getElementById("questionUI");
         const pinkPage = document.getElementById("pinkPage");
         const yesBtn = document.getElementById("yesBtn");
@@ -569,41 +575,41 @@
         let noClicks = 0;
         let noScale = 1;
 
-        // Hayır butonu rastgele kart içinde konumlanacak
+
         function moveNoButton() {
             const pad = 14;
             const rect = card.getBoundingClientRect();
 
-            // butonun ölçüsünü scale sonrası da hesaba katmaya çalışalım
+
             const btnRect = noBtn.getBoundingClientRect();
             const bw = btnRect.width || 110;
             const bh = btnRect.height || 42;
 
-            // kartın içinde kalacak rastgele koordinat
+
             const maxX = rect.width - bw - pad * 2;
             const maxY = rect.height - bh - pad * 2;
 
             const x = pad + Math.max(0, Math.random() * maxX);
             const y = pad + Math.max(0, Math.random() * maxY);
 
-            // absolute (card'ın içindeki wrapper zaten full)
+
             noBtn.style.left = x + "px";
             noBtn.style.top = y + "px";
             noBtn.style.transform = `translate(0,0) scale(${noScale})`;
         }
 
-        // başlangıçta ortadan biraz aşağıda dursun
+
         setTimeout(() => moveNoButton(), 60);
 
         noBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             noClicks += 1;
 
-            // her tıklamada küçült + zıplat
+
             noScale = Math.max(0.55, noScale - 0.18);
             moveNoButton();
 
-            // 3. tık -> yok olsun
+
             if (noClicks >= 3) {
                 noBtn.style.opacity = "0";
                 noBtn.style.pointerEvents = "none";
@@ -620,7 +626,7 @@
                 h.style.top = (68 + Math.random() * 18) + "%";
                 h.style.animationDelay = (Math.random() * 1.2) + "s";
                 h.style.animationDuration = (2.2 + Math.random() * 1.6) + "s";
-                // bazıları altın tonlu
+
                 if (Math.random() < 0.28) h.style.background = "rgba(251,191,36,.80)";
                 hearts.appendChild(h);
             }
@@ -636,7 +642,7 @@
         backBtn.addEventListener("click", () => {
             pinkPage.style.display = "none";
             questionUI.style.display = "grid";
-            // Hayır butonunu tekrar getir (istersen reset)
+
             noClicks = 0;
             noScale = 1;
             noBtn.style.display = "block";
